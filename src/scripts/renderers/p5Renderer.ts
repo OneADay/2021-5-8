@@ -9,7 +9,7 @@ export default class P5Renderer implements BaseRenderer{
 
     recording: boolean = false;
     colors = ['#0B688C', '#1EC6D9', '#30F2DF', '#F2B3B3'];
-    backgroundColor = '#ffffff';
+    backgroundColor = '#1EC6D9';
 
     canvas: HTMLCanvasElement;
     s: any;
@@ -68,22 +68,38 @@ export default class P5Renderer implements BaseRenderer{
             let r, 
             x1, 
             y1, 
-            golden = s.radians(180*(3-s.sqrt(5)));
+            golden;
 
-            s.background(this.backgroundColor);
+            s.colorMode(s.RGB);
+            let bg = s.color(this.backgroundColor);
+            //bg.setAlpha(10);
+            s.background(bg);
+
             s.smooth();
             s.noStroke();
-            s.fill(this.colors[0]);
+
+            //s.colorMode(s.HSB);
 
             for (let n=1; n<=count; n++) 
             {
+              golden = s.radians(180*(3-s.sqrt(5))) + (Math.sin(frameDelta) * 0.001);
               r = space*s.sqrt(n) + Math.sin(frameDelta) * 2;
               x1 = s.width/2+2*r*s.cos(golden*n);
               y1 = s.height/2+2*r*s.sin(golden*n);
-              //x1 += Math.sin(n + frameDelta + golden) * 2;
-              //y1 += Math.cos(n + frameDelta + golden) * 2;
 
               let scale = Math.sin(n + frameDelta) * size;
+              
+              //let color = this.colors[1];
+              //let offset = 0.5 + Math.sin(frameDelta) * 0.5;
+              let pct = 0.5 + Math.sin(frameDelta) * n / count;
+              //let hue = ((offset + n / count) * 360) % 360;
+              //let color = s.color(hue, 255, 255, 255);
+              let color1 = s.color(this.colors[0]);
+              let color2 = s.color(this.colors[2]);
+              let color = s.lerpColor(color1, color2, pct);
+
+              s.fill(color);
+
               s.ellipse(x1, y1, scale, scale);
             }
             
